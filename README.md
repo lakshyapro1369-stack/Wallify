@@ -1,2 +1,34 @@
-# Wallify
-You can find the latest wallpapers for your phone here with a easy and free download 
+
+name: Build WALLIFY APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Extract project
+        run: |
+          unzip -q Wallify_Android_Studio_Project.zip
+
+      - name: Build APK
+        run: gradle -p WallifyAndroid assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: WALLIFY-APK
+          path: WallifyAndroid/app/build/outputs/apk/debug/*.apk
